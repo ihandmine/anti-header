@@ -50,7 +50,9 @@ setup(
     packages=PACKAGES,
     include_package_data=True,
     zip_safe=True,
-    install_requires=[],
+    install_requires=[
+        "anti-useragent",
+    ],
     keywords=[
         'header', 'headers', 'crawl header',
         'fake', 'fake header', 'browser', 'spider header',

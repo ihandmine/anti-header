@@ -13,4 +13,8 @@ class NotFoundParamError(Exception):
     pass
 
 
+class UnSupportMethodError(Exception):
+    pass
+
+
 UserAgentError = AntiUserAgentError

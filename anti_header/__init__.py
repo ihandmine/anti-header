@@ -8,7 +8,7 @@ from random import sample, randint, choice
 from urllib.parse import urlsplit
 
 from anti_useragent import UserAgent
-from anti_header.exceptions import UserAgentError, NotFoundParamError
+from anti_header.exceptions import UserAgentError, NotFoundParamError, UnSupportMethodError
 from anti_header.headers import Headers
 from anti_header.utils import logging
 
@@ -34,16 +34,15 @@ class UsageHeader(object):
                  default_header: dict = None,
                  logger=False, **kwargs):
         assert isinstance(logger, bool), "logger param must bool type"
-        self.logger = logger or logging.get_logger('anti_header')
+        self.logger = logging.get_logger('anti_header') if logger else None
         self._headers: Headers = Headers({})
-
+        self.url: str = url or "https://www.google.com/"
+        self.headers_must: list = self.set_headers_must(must_header or {})
+        self.headers_param: list = self.set_header_rand(rand_header or {})
+        if kwargs.get('dry') is not None:
+            del kwargs['dry']
         if default_header:
             self._headers.update(default_header)
-        self.url: str = url or "https://www.google.com/"
-        self.headers_must = self.set_headers_must(must_header or {})
-        self.headers_param = self.set_header_rand(rand_header or {})
-        if kwargs.get('dry'):
-            del kwargs['dry']
         self._ua = UserAgent(**kwargs)
 
     def __getitem__(self, rule: str):
@@ -58,6 +57,8 @@ class UsageHeader(object):
                 self._headers.update(param)
             self._headers.update(self.user_agent())
             return self._headers
+        else:
+            raise UnSupportMethodError
 
     def set_headers_must(self, header: dict) -> list:
         _header_must = [
@@ -69,11 +70,8 @@ class UsageHeader(object):
 
     def set_header_rand(self, header: dict) -> list:
         parse_url = urlsplit(self.url)
-        accept_string_all = '*/*,text/html,application/xhtml+xml,application/xml;q=0.9,' \
-                            'image/avif,image/webp,image/apng,*/*;q=0.8,application/signed' \
-                            '-exchange;v=b3;q=0.9'.split(',')
         _header_params = [
-            {'accept': ''.join(sample(accept_string_all, randint(0, len(accept_string_all))))},
+            {'accept': '*/*'},
             {'accept-type': 'utf-8'},
             {'accept-encoding': 'gzip, deflate'},
             {'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'},
@@ -126,12 +124,13 @@ class UsageHeader(object):
         new_header_params = sample(self.headers_param, randint(0, len(self.headers_param)))
         for param in new_header_params + self.headers_must:
             self._headers.update(param)
-        self.logger.debug('[Headers]: ' + str(self._headers))
+        if self.logger is not None:
+            self.logger.debug('[Headers]: {}', str(self._headers.to_unicode_dict()))
         return self._headers
 
 
 Header = UsageHeader
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 VERSION = __version__
 

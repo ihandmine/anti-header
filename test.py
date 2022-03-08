@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # hd = Header(must_header={'aa': 'bb'}).base
 
     # rand_header param useage
-    hd = Header(url='https://www.baidu.com/', rand_header={'cc': 'dd'}).random
+    hd = Header(logger=True, url='https://www.baidu.com/', rand_header={'cc': 'dd'}, platform='windows').random
     # hd = Header(rand_header={'cc': 'dd'}).base
     pprint(hd.to_unicode_dict())
 
