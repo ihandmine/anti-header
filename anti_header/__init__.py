@@ -74,13 +74,13 @@ class UsageHeader(object):
             {'accept': '*/*'},
             {'accept-type': 'utf-8'},
             {'accept-encoding': 'gzip, deflate'},
-            {'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'},
+            # {'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'},
             {'authority': parse_url.netloc},
             {'cache-control': choice(['max-age=0', 'no-cache'])},
             {'cache-type': 'any'},
             {'content-from': 'google'},
             {'connection': 'keep-alive'},
-            {"content-type": "application/x-www-form-urlencoded"},
+            # {"content-type": "application/x-www-form-urlencoded"},
 
             {'cookie': self._md_hex},
 
@@ -130,7 +130,7 @@ class UsageHeader(object):
 
 
 Header = UsageHeader
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 VERSION = __version__
 
