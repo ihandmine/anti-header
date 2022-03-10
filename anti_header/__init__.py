@@ -32,18 +32,22 @@ class UsageHeader(object):
                  rand_header: dict = None,
                  must_header: dict = None,
                  default_header: dict = None,
+                 connection: bool = False,
+                 browser: str = "random",
+                 dry: bool = False,
                  logger=False, **kwargs):
         assert isinstance(logger, bool), "logger param must bool type"
         self.logger = logging.get_logger('anti_header') if logger else None
-        self._headers: Headers = Headers({})
         self.url: str = url or "https://www.google.com/"
+        self.kwargs = kwargs
+        self.connection = connection
+        self.browser = browser
+        self.dry = dry
+
+        self._headers: Headers = self.set_headers_default(default_header or {})
         self.headers_must: list = self.set_headers_must(must_header or {})
         self.headers_param: list = self.set_header_rand(rand_header or {})
-        if kwargs.get('dry') is not None:
-            del kwargs['dry']
-        if default_header:
-            self._headers.update(default_header)
-        self._ua = UserAgent(**kwargs)
+        self._ua = self.__ua
 
     def __getitem__(self, rule: str):
         return self.__getattr__(rule)
@@ -60,6 +64,25 @@ class UsageHeader(object):
         else:
             raise UnSupportMethodError
 
+    @property
+    def is_singleton(self):
+        return not self.dry
+
+    @property
+    def __ua(self) -> UserAgent:
+        return UserAgent(**self.kwargs)
+
+    def set_headers_default(self, header: dict) -> Headers:
+        _headers = Headers({})
+        _header_default = [
+            {'X-Forwarded-For': f'{randint(1, 254)}.{randint(1, 254)}.{randint(1, 254)}.{randint(1, 254)}'},
+            {'connection': self.connection and 'keep-alive' or 'close'}
+        ]
+        _header_default.extend([{key: value} for key, value in header.items()])
+        for default in _header_default:
+            _headers.update(default)
+        return _headers
+
     def set_headers_must(self, header: dict) -> list:
         _header_must = [
             {''.join(sample(string.ascii_lowercase, 5)): ''.join(sample(string.ascii_lowercase, 6))},
@@ -74,12 +97,11 @@ class UsageHeader(object):
             {'accept': '*/*'},
             {'accept-type': 'utf-8'},
             {'accept-encoding': 'gzip, deflate'},
-            # {'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'},
+            {'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'},
             {'authority': parse_url.netloc},
             {'cache-control': choice(['max-age=0', 'no-cache'])},
             {'cache-type': 'any'},
             {'content-from': 'google'},
-            {'connection': 'keep-alive'},
             # {"content-type": "application/x-www-form-urlencoded"},
 
             {'cookie': self._md_hex},
@@ -100,7 +122,6 @@ class UsageHeader(object):
             {'TE': 'Trailers'},
             {'upgrade-type': 'none'},
             {'upgrade-insecure-requests': '1'},
-            {'X-Forwarded-For': '1'}
         ]
         _header_params.extend([{key: value} for key, value in header.items()])
         return _header_params
@@ -114,13 +135,13 @@ class UsageHeader(object):
 
     def user_agent(self) -> dict:
         try:
-            _ua = self._ua.random
+            _ua = self._ua[self.browser]
         except UserAgentError:
             _ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' \
                   ' (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
         return {"User-Agent": _ua}
 
-    def process(self) -> dict:
+    def process(self) -> Headers:
         new_header_params = sample(self.headers_param, randint(0, len(self.headers_param)))
         for param in new_header_params + self.headers_must:
             self._headers.update(param)
@@ -130,7 +151,7 @@ class UsageHeader(object):
 
 
 Header = UsageHeader
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 VERSION = __version__
 

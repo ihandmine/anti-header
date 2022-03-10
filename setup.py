@@ -29,7 +29,7 @@ LONG_DESCRIPTION = ''
 URL = "https://github.com/ihandmine/anti-header.git"
 AUTHOR = "handmine"
 AUTHOR_EMAIL = "handmine@outlook.com"
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 LICENSE = "MIT"
 
 setup(
