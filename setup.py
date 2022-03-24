@@ -12,9 +12,17 @@ DESCRIPTION = "fake chrome, firefox, opera browser header anti header"
 URL = "https://github.com/ihandmine/anti-header"
 AUTHOR = "handmine"
 AUTHOR_EMAIL = "handmine@outlook.com"
-VERSION = "0.0.5"
+VERSION = "0.0.6"
 LICENSE = "MIT"
 REQUIRES_PYTHON = ">=3.7.0"
+
+
+def list_dir(dir):
+    result = [dir]
+    for file in os.listdir(dir):
+        if os.path.isdir(os.path.join(dir, file)):
+            result.extend(list_dir(os.path.join(dir, file)))
+    return result
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -71,7 +79,7 @@ setup(
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     license=LICENSE,
-    packages=[NAME],
+    packages=list_dir(NAME),
     package_dir={NAME: NAME},
     python_requires=REQUIRES_PYTHON,
     include_package_data=True,
