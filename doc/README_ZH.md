@@ -2,24 +2,24 @@
 
 
 
-> info: fake chrome, firefox, opera browser header anti header
+> 信息: 伪装chrome, firefox, opera浏览器头, 随机header
 
-## Features
+## 特性
 
-- more header params
-- more request method
+- 更多的header参数
+- 更多的使用方式
 
-​	
 
-Tips:  with [anti-useragent](https://github.com/ihandmine/anti-useragent) package to use, fully compatible configuration
 
-### Installation
+Tips:  与[anti-useragent](https://github.com/ihandmine/anti-useragent) 包配合使用, 完全兼容参数配置
+
+### 安装
 
 ```shell
 pip install anti-header
 ```
 
-### Usage
+### 用法
 
 ```python
 import anti_header
@@ -67,7 +67,7 @@ random example
 ```
 
 
-If You want to  requests method useage just: 
+如果你通过使用requests包的方式去使用: 
 
 ```python
 # test.py
@@ -80,7 +80,7 @@ requests.get(_url, header=hd.random.to_unicode_dict())
 
 ```
 
-If You want to  scrapy downloadmiddleware method useage just: 
+如果你通过使用scrapy 下载中间件的方式去使用: 
 
 ```python
 
@@ -99,7 +99,7 @@ class RandomHeaderMiddleware(object):
         return response
 ```
 
-If You want to  specify param just: 
+如果你想要指定一些特殊的参数: 
 
 ```python
 from anti_header import Header
@@ -119,13 +119,13 @@ hd = Header(dry=True)
 
 
 
-Make sure that You using latest version
+确保你使用的是最新版本:
 
 ```
 pip install -U anti-header
 ```
 
-Check version via python console: 
+检查你的版本通过python控制台: 
 
 ```
 import anti_header
