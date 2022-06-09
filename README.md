@@ -11,6 +11,8 @@
 
 ​	
 
+English | [中文](./doc/README.md)
+
 Tips:  with [anti-useragent](https://github.com/ihandmine/anti-useragent) package to use, fully compatible configuration
 
 ### Installation

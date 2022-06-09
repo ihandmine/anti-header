@@ -11,6 +11,8 @@
 
 
 
+[English](../README.md) | 中文
+
 Tips:  与[anti-useragent](https://github.com/ihandmine/anti-useragent) 包配合使用, 完全兼容参数配置
 
 ### 安装
